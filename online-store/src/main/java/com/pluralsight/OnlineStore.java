@@ -1,14 +1,11 @@
 package com.pluralsight;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -41,7 +38,7 @@ public class OnlineStore {
         return new Product(productSKU, productName, productPrice, productDepartment);
     }
 
-    public static void displayStoreHomeScreen() throws InterruptedException {
+    public static void displayStoreHomeScreen() throws InterruptedException, IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("------------------------------------------------------");
         System.out.println("\t\t\t\tWelcome to Javazon\t\t");
@@ -71,7 +68,7 @@ public class OnlineStore {
         }
     }
 
-    public static void displayStoreInventoryProducts(Scanner scanner) throws InterruptedException {
+    public static void displayStoreInventoryProducts(Scanner scanner) throws InterruptedException, IOException {
         System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("\t\t\t\t\t\t\tJavazon Shopping Directory");
         System.out.println("----------------------------------------------------------------------------------------\n");
@@ -103,10 +100,14 @@ public class OnlineStore {
         }
     }
 
-    public static void searchInventoryProducts(Scanner scanner) throws InterruptedException {
+    public static void searchInventoryProducts(Scanner scanner) throws InterruptedException, IOException {
         System.out.print("\nEnter search keyword: ");
         String searchKeyword = scanner.nextLine().trim().toLowerCase();
         boolean itemFound = false;
+        System.out.println("\n------------------------------------------------------------------------");
+        System.out.println("\t\t\t\t\t\t\tSearch Results");
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println();
         for (Product product : storeInventory) {
             if (product.getProductName().toLowerCase().contains(searchKeyword) ||
                     product.getProductDepartment().toLowerCase().contains(searchKeyword) ||
@@ -116,10 +117,12 @@ public class OnlineStore {
             }
         }
 
+
         if (!itemFound) {
             System.out.println("Sorry that product doesn't exist in our inventory. Please try again.");
             searchInventoryProducts(scanner);
         } else {
+            System.out.println();
             System.out.print("Would you like to add one of the following to your cart? (yes/no) ");
             String addToCartOption = scanner.nextLine().trim();
             if (addToCartOption.equalsIgnoreCase("yes")) {
@@ -130,19 +133,16 @@ public class OnlineStore {
                 System.out.println("-Else- Go Back Home");
                 System.out.print("Enter Option: ");
                 String userSearchRedo = scanner.nextLine().trim();
-                switch (userSearchRedo) {
-                    case "1":
-                        searchInventoryProducts(scanner);
-                        break;
-                    default:
-                        displayStoreHomeScreen();
-                        break;
+                if (userSearchRedo.equals("1")) {
+                    searchInventoryProducts(scanner);
+                } else {
+                    displayStoreHomeScreen();
                 }
             }
         }
     }
 
-    public static void addToUserCart(Scanner scanner) throws InterruptedException {
+    public static void addToUserCart(Scanner scanner) throws InterruptedException, IOException {
         while (true) {
             System.out.print("Enter the SKU number of the product you'd like to add to your cart: ");
             String userCartInput = scanner.nextLine().trim().toLowerCase(); // Convert to an upper case for consistency
@@ -157,15 +157,20 @@ public class OnlineStore {
                     } else { // If the SKU doesn't exist in the cart
                         userCart.put(userCartInput, new CartItem(product, 1)); // Add new entry with quantity 1
                     }
-                    System.out.println("Product added to cart successfully!");
-                    System.out.println(userCart);
+                    System.out.println("\n------------------------------------------------------");
+                    System.out.println("\t\tProduct added to cart successfully!");
+                    System.out.println("------------------------------------------------------");
+                    System.out.println(userCart.get(userCartInput));
+                    System.out.println();
                     addItemFlag = true; // Set flag to true since user added an item
                     break; // Break out of the loop for adding another item
                 }
             }
 
             if (!addItemFlag) { // If user didn't add an item
-                System.out.println("Product not found in inventory.");
+                System.out.println("------------------------------------------------------------------------");
+                System.out.println("\t\t\t\tProduct not found in inventory!");
+                System.out.println("------------------------------------------------------------------------\n");
                 while (true) {
                     System.out.print("Would you like to try again? (yes/no) ");
                     String tryAgain = scanner.nextLine().trim().toLowerCase();
@@ -200,11 +205,16 @@ public class OnlineStore {
     }
 
 
-    public static void displayUserCart(Scanner scanner) throws InterruptedException {
-        if(userCart.size() > 0){
+    public static void displayUserCart(Scanner scanner) throws InterruptedException, IOException {
+        if(!userCart.isEmpty()){
+            System.out.println("------------------------------------------------------");
+            System.out.println("\t\tMy Shopping Cart");
+            System.out.println("------------------------------------------------------");
+            System.out.println();
             for(CartItem item : userCart.values()){
                 System.out.println(item);
             }
+            System.out.println();
             System.out.println("What would you like to do? ");
             System.out.println("-1- Check Out");
             System.out.println("-2- Remove Product");
@@ -235,20 +245,18 @@ public class OnlineStore {
                 System.out.println("-Else- Exit");
                 System.out.print("Enter Option: ");
                 String userChoiceForReturn = scanner.nextLine().trim();
-                switch (userChoiceForReturn) {
-                    case "1":
-                        System.out.println();
-                        displayStoreHomeScreen();
-                        break;
-                    default:
-                        System.out.println("Exiting....");
-                        return;
+                if (userChoiceForReturn.equals("1")) {
+                    System.out.println();
+                    displayStoreHomeScreen();
+                } else {
+                    System.out.println("Exiting....");
+                    return;
                 }
             }
         }
     }
 
-    public static void removeUserProduct(Scanner scanner) throws InterruptedException {
+    public static void removeUserProduct(Scanner scanner) throws InterruptedException, IOException {
         System.out.println("What would you like to do?");
         System.out.println("-1- Remove specific item from cart");
         System.out.println("-2- Remove all items from cart");
@@ -270,7 +278,7 @@ public class OnlineStore {
         }
     }
 
-    public static void removeSpecificItemFromCart(Scanner scanner) throws InterruptedException {
+    public static void removeSpecificItemFromCart(Scanner scanner) throws InterruptedException, IOException {
         System.out.print("Enter the SKU number of the product you'd like to remove from your cart: ");
         String userRemovalChoice = scanner.nextLine().trim().toLowerCase();
         boolean skuItemInCart = false;
@@ -319,7 +327,7 @@ public class OnlineStore {
         }
 
         if(!skuItemInCart){
-            System.out.println("Looks like that item isn't currently in your cart");
+            System.out.println("\nLooks like that item isn't currently in your cart\n");
             System.out.println("What would you like to do?");
             System.out.println("-1- Remove specific item from cart");
             System.out.println("-2- Check out");
@@ -342,7 +350,7 @@ public class OnlineStore {
 
     }
 
-    public static void removeAllItemsFromCart() throws InterruptedException {
+    public static void removeAllItemsFromCart() throws InterruptedException, IOException {
         userCart.clear();
         System.out.println("------------------------------------------------------");
         System.out.println("\t\t\t\t0 Items In Cart!");
@@ -352,9 +360,13 @@ public class OnlineStore {
         displayStoreHomeScreen();
     }
 
-    public static void checkOutUserCart(Scanner scanner) throws InterruptedException {
+    public static void checkOutUserCart(Scanner scanner) throws InterruptedException, IOException {
         double totalPrice = 0.0;
-        if (userCart.size() > 0) {
+        if (!userCart.isEmpty()) {
+            System.out.println("------------------------------------------------------");
+            System.out.println("\t\tCheck Out");
+            System.out.println("------------------------------------------------------");
+            System.out.println();
             for (CartItem item : userCart.values()) {
                 System.out.println(item);
                 totalPrice += item.getTotalPrice(); // Add the total price for each item to the total
@@ -370,53 +382,85 @@ public class OnlineStore {
         }
     }
 
-    public static void displayTotalAndPrint(double totalPrice, Scanner scanner) {
+    public static void displayTotalAndPrint(double totalPrice, Scanner scanner) throws InterruptedException, IOException {
         System.out.println("------------------------------------------------------");
-        System.out.printf("\t\t\t\tTotal Price: $%,.2f", totalPrice);
+        System.out.printf("\t\t\t\tTotal Price: $%,.2f\n", totalPrice);
         System.out.println("------------------------------------------------------");
+
+        double totalPayment = 0.0; // Initialize total payment to 0
 
         while (true) {
-            System.out.println("Please insert cash amount here to pay: ");
+            System.out.print("Please insert cash amount here to pay: ");
             double payment = scanner.nextDouble();
 
-            if (payment < totalPrice) {
-                double totalLeft = totalPrice - payment;
-                System.out.printf("Sorry, you still owe $%.2f%n", totalLeft);
-            } else if (payment > totalPrice) {
-                double change = payment - totalPrice;
-                System.out.printf("Thank you for your payment! Your change is $%.2f%n", change);
-                break; // Exit the loop since the payment is greater than the total price
+            totalPayment += payment; // Accumulate the payment
+
+            if (totalPayment < totalPrice) {
+                double totalLeft = totalPrice - totalPayment;
+                System.out.printf("You've paid $%.2f, but you still owe $%.2f%n", totalPayment, totalLeft);
+            } else if (totalPayment > totalPrice) {
+                double change = totalPayment - totalPrice;
+                System.out.println("\nThank you for your payment!");
+                printReceipt(change,totalPrice,totalPayment);
+                break; // Exit the loop since the total payment is greater than or equal to the total price
             } else {
-                System.out.println("Thank you for your payment!");
-                break; // Exit the loop if the payment equals the total price
+                System.out.println("\nThank you for your payment!");
+                printReceipt(0.00,totalPrice,totalPayment);
+                break; // Exit the loop if the total payment equals the total price
             }
         }
+
     }
 
-    public static void printReceipt(double change,  double totalPrice) {
-        String formattedDate = "";
+    public static void printReceipt(double change,  double totalPrice, double totalPayment) throws InterruptedException, IOException {
+        String formattedDate;
         LocalDateTime date = LocalDateTime.now();
-        DateTimeFormatter myFormattedDate = DateTimeFormatter.ofPattern("h:mm 'on' dd-MMM-yyyy", Locale.US);
-        formattedDate = myFormattedDate.format(date.atZone(ZoneId.systemDefault()));
-        System.out.println(formattedDate);
+        DateTimeFormatter myFormattedDate = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy HH:mm");
+        formattedDate = myFormattedDate.format(date.atZone(ZoneId.of("GMT")));
         // Print the receipt
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("Receipt:");
-        System.out.println("--------");
         // Order Date
-        System.out.printf("Order Date: ", formattedDate);
+        System.out.printf("Order Date: %s%n", formattedDate);
         // Line items
-        System.out.println("Line Items:");
-        for (String item : lineItems) {
-            System.out.println("- " + item);
+        System.out.println("Items Purchased:");
+        for (CartItem cartItem : userCart.values()) {
+            System.out.println("- " + cartItem);
         }
         // Sales Total
-        System.out.printf("Sales Total: $%.2f%n", salesTotal);
+        System.out.printf("\t-Sales Total: $%.2f%n", totalPrice);
         // Amount Paid
-        System.out.printf("Amount Paid: $%.2f%n", amountPaid);
+        System.out.printf("\t-Amount Paid: $%.2f%n", totalPayment);
         // Change Given
-        System.out.printf("Change Given: $%.2f%n", changeGiven);
+        System.out.printf("\t-Change Given: $%.2f%n", change);
+        salesFileMaker(formattedDate, change, totalPrice, totalPayment);
+        userCart.clear();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("Thank you come again");
+        System.out.println("Directing you back Home....\n\n");
+        Thread.sleep(2500);
+        displayStoreHomeScreen();
     }
 
 
-
+    public static void salesFileMaker(String formattedDate, double change,  double totalPrice, double totalPayment) throws IOException {
+        String filename = LocalDateTime.parse(formattedDate, DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy HH:mm"))
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        String filePath = "/Users/butterflycoupe/Desktop/YearUp/online-store/online-store/Receipts/" + filename + ".txt";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+        writer.write("Purchase Date - " + formattedDate);
+        writer.newLine();
+        writer.write("Purchased Items");
+        writer.newLine();
+        for (CartItem cartItem : userCart.values()) {
+            writer.write(" - " + cartItem);
+            writer.newLine();
+        }
+        writer.write(String.format("-Sales Total - $%.2f", totalPrice));
+        writer.newLine();
+        writer.write(String.format("-Amount Paid - $%.2f", totalPayment));
+        writer.newLine();
+        writer.write(String.format("-Change Given - $%.2f", change));
+        writer.close();
+    }
 }

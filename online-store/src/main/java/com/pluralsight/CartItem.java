@@ -39,7 +39,8 @@ public class CartItem {
 
     @Override
     public String toString() {
-        return "product=" + product + ", quantity=" + quantity;
+        return String.format("Product: %s | Quantity: %d", product.toString(), quantity);
     }
+
 
 }

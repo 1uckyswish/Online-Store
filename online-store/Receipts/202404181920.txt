@@ -1,0 +1,9 @@
+Purchase Date - Thursday, April 18, 2024 19:20
+Purchased Items
+ - Product: SKU: PW1341 | Name: Solar Powered Battery Charger | Price: $19.99 | Department: Electronics | Quantity: 1
+ - Product: SKU: CP2154 | Name: RGB Wireless Gaming Mouse | Price: $67.45 | Department: Computers | Quantity: 2
+ - Product: SKU: AV1051 | Name: JBL Bluetooth Speaker | Price: $89.95 | Department: Audio Video | Quantity: 1
+ - Product: SKU: GM1032 | Name: Telestrations Board Game | Price: $17.99 | Department: Games | Quantity: 1
+-Sales Total - $262.83
+-Amount Paid - $350.00
+-Change Given - $87.17

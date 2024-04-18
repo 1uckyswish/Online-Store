@@ -1,0 +1,7 @@
+Purchase Date - Thursday, April 18, 2024 19:23
+Purchased Items
+ - Product: SKU: AV1412 | Name: XLR Podcast Cardiod Mic | Price: $44.99 | Department: Audio Video | Quantity: 1
+ - Product: SKU: PW1431 | Name: Wireless Charger iPhone | Price: $12.99 | Department: Electronics | Quantity: 1
+-Sales Total - $57.98
+-Amount Paid - $60.00
+-Change Given - $2.02

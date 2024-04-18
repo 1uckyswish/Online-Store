@@ -47,8 +47,9 @@ public class Product {
 
     @Override
     public String toString() {
-        return "SKU: " + productSKU + ", Name: " + productName + ", Price: $" + productPrice +
-                ", Department: " + productDepartment;
+        return String.format("SKU: %s | Name: %s | Price: $%.2f | Department: %s",
+                productSKU, productName, productPrice, productDepartment);
     }
+
 
 }
